@@ -3,7 +3,7 @@ import { CalendarController } from './calendar.controller';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { CalendarService } from "./services/calendar.service";
 import { CALENDAR_COMPONENTS } from "./components/index";
-import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 
 export function calendarController(modalCtrl: ModalController,
                                    calSvc: CalendarService) {
@@ -15,7 +15,7 @@ var IonicModuleForRoot = IonicModule.forRoot();
 @NgModule({
   imports: [
     IonicModuleForRoot,
-    BrowserModule
+    CommonModule
   ],
   declarations: CALENDAR_COMPONENTS,
   exports: CALENDAR_COMPONENTS,
