@@ -1,34 +1,35 @@
 import { Component, ViewChild, ElementRef, ChangeDetectorRef, Renderer2, OnInit } from '@angular/core';
-import { NavParams, ViewController, Content, InfiniteScroll } from 'ionic-angular';
-import { CalendarDay, CalendarMonth, CalendarModalOptions } from '../calendar.model'
+import { ModalController, NavParams, Content, InfiniteScroll } from '@ionic/angular';
+import { CalendarDay, CalendarMonth, CalendarModalOptions } from '../calendar.model';
 import { CalendarService } from '../services/calendar.service';
-import * as moment from 'moment';
+import * as moment_ from 'moment';
+const moment = moment_;
 import { pickModes } from "../config";
 
 @Component({
   selector: 'ion-calendar-modal',
   template: `
     <ion-header>
-      <ion-navbar [color]="_d.color">
+      <ion-toolbar [color]="_d.color">
 
-        <ion-buttons start>
-          <button type='button' ion-button icon-only clear (click)="onCancel()">
+        <ion-buttons slot="start">
+          <ion-button type='button' icon-only clear (click)="onCancel()">
             <span *ngIf="_d.closeLabel !== '' && !_d.closeIcon">{{_d.closeLabel}}</span>
             <ion-icon *ngIf="_d.closeIcon" name="close"></ion-icon>
-          </button>
+          </ion-button>
         </ion-buttons>
 
         <ion-title>{{_d.title}}</ion-title>
 
-        <ion-buttons end>
-          <button type='button' ion-button icon-only *ngIf="!_d.autoDone" clear [disabled]="!canDone()" (click)="done()">
+        <ion-buttons slot="end">
+          <ion-button type='button' icon-only *ngIf="!_d.autoDone" clear [disabled]="!canDone()" (click)="done()">
             <span *ngIf="_d.doneLabel !== '' && !_d.doneIcon">{{_d.doneLabel}}</span>
             <ion-icon *ngIf="_d.doneIcon" name="checkmark"></ion-icon>
-          </button>
+          </ion-button>
 
         </ion-buttons>
 
-      </ion-navbar>
+      </ion-toolbar>
       
       <ng-content select="[sub-header]"></ng-content>
 
@@ -87,9 +88,10 @@ export class CalendarModal implements OnInit {
   constructor(private _renderer: Renderer2,
     public _elementRef: ElementRef,
     public params: NavParams,
-    public viewCtrl: ViewController,
     public ref: ChangeDetectorRef,
+    public modalCtrl: ModalController,
     public calSvc: CalendarService) {
+    this.content.scrollEvents = true;
   }
 
   ngOnInit(): void {
@@ -170,13 +172,13 @@ export class CalendarModal implements OnInit {
   }
 
   onCancel(): void {
-    this.viewCtrl.dismiss(null, 'cancel');
+    this.modalCtrl.dismiss(null, 'cancel');
   }
 
   done(): void {
     const { pickMode } = this._d;
 
-    this.viewCtrl.dismiss(
+    this.modalCtrl.dismiss(
       this.calSvc.wrapResult(this.datesTemp, pickMode),
       'done'
     );
@@ -208,7 +210,7 @@ export class CalendarModal implements OnInit {
     let rangeEnd = this._d.to ? moment(this._d.to).subtract(1, 'M') : 0;
 
     if (len <= 0 || (rangeEnd !== 0 && moment(final.original.time).isAfter(rangeEnd))) {
-      infiniteScroll.enable(false);
+      infiniteScroll.disabled = true;
       return;
     }
 
@@ -234,7 +236,7 @@ export class CalendarModal implements OnInit {
 
     if (defaultDateIndex === -1 || defaultDateMonth === 0) return;
     setTimeout(() => {
-      this.content.scrollTo(0, defaultDateMonth, 128);
+      this.content.getScrollElement().scrollToPoint(0, defaultDateMonth, 128);
     }, 300);
   }
 
@@ -246,11 +248,11 @@ export class CalendarModal implements OnInit {
     if (!this._d.canBackwardsSelected) return;
     if ($event.scrollTop <= 200 && $event.directionY === "up" && this._s) {
       this._s = !1;
-      let lastHeight = this.content.getContentDimensions().scrollHeight;
+      let lastHeight = this.content.getScrollElement().scrollHeight;
       setTimeout(() => {
         this.backwardsMonth();
-        let nowHeight = this.content.getContentDimensions().scrollHeight;
-        this.content.scrollTo(0, nowHeight - lastHeight, 0)
+        let nowHeight = this.content.getScrollElement().scrollHeight;
+        this.content.getScrollElement().scrollToPoint(0, nowHeight - lastHeight, 0)
           .then(() => {
             this._s = !0;
           })

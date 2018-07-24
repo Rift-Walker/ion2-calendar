@@ -15,7 +15,8 @@ import {
 import { CalendarService } from "../services/calendar.service";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import * as moment from 'moment';
+import * as moment_ from 'moment';
+const moment = moment_;
 import { defaults, pickModes } from "../config";
 
 export const ION_CAL_VALUE_ACCESSOR: Provider = {
@@ -29,32 +30,31 @@ export const ION_CAL_VALUE_ACCESSOR: Provider = {
   providers: [ION_CAL_VALUE_ACCESSOR],
   template: `
     <div class="title">
-      <ng-template [ngIf]="showMonthPicker" [ngIfElse]="title">
-        <button type="button"
-                ion-button
+      <ng-template [ngIf]="_showMonthPicker" [ngIfElse]="title">
+        <ion-button type="button"
                 clear
                 class="switch-btn"
                 (click)="switchView()">
           {{_monthFormat(monthOpt.original.time)}}
           <ion-icon class="arrow-dropdown"
-                    [name]="view === 'days' ? 'md-arrow-dropdown' : 'md-arrow-dropup'"></ion-icon>
-        </button>
+                    [name]="_view === 'days' ? 'md-arrow-dropdown' : 'md-arrow-dropup'"></ion-icon>
+        </ion-button>
       </ng-template>
       <ng-template #title>
         <div class="switch-btn">
           {{_monthFormat(monthOpt.original.time)}}
         </div>
       </ng-template>
-      <ng-template [ngIf]="showToggleButtons">
-        <button type='button' ion-button clear class="back" [disabled]="!canBack()" (click)="prev()">
+      <ng-template [ngIf]="_showToggleButtons">
+        <ion-button type='button' clear class="back" [disabled]="!canBack()" (click)="prev()">
           <ion-icon name="ios-arrow-back"></ion-icon>
-        </button>
-        <button type='button' ion-button clear class="forward" [disabled]="!canNext()" (click)="next()">
+        </ion-button>
+        <ion-button type='button' clear class="forward" [disabled]="!canNext()" (click)="next()">
           <ion-icon name="ios-arrow-forward"></ion-icon>
-        </button>
+        </ion-button>
       </ng-template>
     </div>
-    <ng-template [ngIf]="view === 'days'" [ngIfElse]="monthPicker">
+    <ng-template [ngIf]="_view === 'days'" [ngIfElse]="monthPicker">
       <ion-calendar-week color="transparent"
                          [weekArray]="_d.weekdays"
                          [weekStart]="_d.weekStart">
@@ -84,14 +84,13 @@ export const ION_CAL_VALUE_ACCESSOR: Provider = {
   `
 })
 export class CalendarComponent implements ControlValueAccessor, OnInit {
-  
-  view: 'month' | 'days' = 'days';
- 
-  private _d: CalendarModalOptions;
-  private _options: CalendarComponentOptions;
-  private _calendarMonthValue: CalendarDay[] = [null, null];
 
-  private _showToggleButtons = true;
+  public _d: CalendarModalOptions;
+  public _options: CalendarComponentOptions;
+  public _view: 'month' | 'days' = 'days';
+  public _calendarMonthValue: CalendarDay[] = [null, null];
+
+  public _showToggleButtons = true;
   get showToggleButtons(): boolean {
     return this._showToggleButtons;
   }
@@ -100,7 +99,7 @@ export class CalendarComponent implements ControlValueAccessor, OnInit {
     this._showToggleButtons = value;
   }
 
-  private _showMonthPicker = true;
+  public _showMonthPicker = true;
   get showMonthPicker(): boolean {
     return this._showMonthPicker;
   }
@@ -109,7 +108,7 @@ export class CalendarComponent implements ControlValueAccessor, OnInit {
     this._showMonthPicker = value;
   }
 
-  private monthOpt: CalendarMonth;
+  public monthOpt: CalendarMonth;
 
   @Input() format: string = defaults.DATE_FORMAT;
   @Input() type: CalendarComponentTypeProperty = 'string';

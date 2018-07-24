@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { isBoolean } from "ionic-angular/util/util";
 import {
   CalendarOriginal,
   CalendarDay,
@@ -8,7 +7,8 @@ import {
   CalendarResult,
   DayConfig
 } from '../calendar.model'
-import * as moment from 'moment';
+import * as moment_ from 'moment';
+const moment = moment_;
 import { defaults, pickModes } from "../config";
 
 @Injectable()
@@ -129,7 +129,7 @@ export class CalendarService {
 
     let _disable = false;
 
-    if (dayConfig && isBoolean(dayConfig.disable)) {
+    if (dayConfig && typeof dayConfig.disable === 'boolean') {
       _disable = dayConfig.disable;
     } else {
       _disable = disableWee || isBetween;

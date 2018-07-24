@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ModalController } from 'ionic-angular';
+import { ModalController } from '@ionic/angular';
 import { ModalOptions, CalendarModalOptions } from './calendar.model'
 import { CalendarModal } from "./components/calendar.modal";
 import { CalendarService } from './services/calendar.service';
@@ -13,30 +13,22 @@ export class CalendarController {
 
   /**
    * @deprecated
-   * @param {CalendarModalOptions} calendarOptions
-   * @param {ModalOptions} modalOptions
-   * @returns {any}
+   * @param calendarOptions
+   * @param modalOptions
+   * @returns
    */
-  openCalendar(calendarOptions: CalendarModalOptions, modalOptions: ModalOptions = {}): Promise<{}> {
+  async openCalendar(calendarOptions: CalendarModalOptions, modalOptions: ModalOptions = {}): Promise<{}> {
 
     let options = this.calSvc.safeOpt(calendarOptions);
-    let calendarModal = this.modalCtrl.create(CalendarModal, Object.assign({
-      options: options
-    }, options), modalOptions);
+    let calendarModal = await this.modalCtrl.create(Object.assign({
+      options: options,
+      component: CalendarModal
+    }, options));
 
-    calendarModal.present();
-
-    return new Promise((resolve, reject) => {
-
-      calendarModal.onDidDismiss((data: {}) => {
-        if (data) {
-          resolve(data);
-        } else {
-          reject('cancelled')
-        }
-      });
-    });
-
+    await calendarModal.present();
+    return calendarModal.onDidDismiss().catch(() => {
+      throw('cancelled')
+    })
   }
 
 }
