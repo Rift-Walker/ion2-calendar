@@ -41,7 +41,7 @@ import { pickModes } from "../config";
 
     </ion-header>
 
-    <ion-content (ionScroll)="onScroll($event)" class="calendar-page"
+    <ion-content scrollEvents=true (ionScroll)="onScroll($event)" class="calendar-page"
                  [ngClass]="{'multi-selection': _d.pickMode === 'multi'}">
 
       <div #months>
@@ -91,7 +91,6 @@ export class CalendarModal implements OnInit {
     public ref: ChangeDetectorRef,
     public modalCtrl: ModalController,
     public calSvc: CalendarService) {
-    this.content.scrollEvents = true;
   }
 
   ngOnInit(): void {
@@ -108,7 +107,7 @@ export class CalendarModal implements OnInit {
   }
 
   init(): void {
-    this._d = this.calSvc.safeOpt(this.params.get('options'));
+    this._d = this.calSvc.safeOpt(this.params.data.modal.options);
     this._d.showAdjacentMonthDay = false;
     this.step = this._d.step;
     if (this.step < 1) {
@@ -202,7 +201,8 @@ export class CalendarModal implements OnInit {
     }
   }
 
-  nextMonth(infiniteScroll: InfiniteScroll): void {
+  nextMonth(event: any): void {
+    let infiniteScroll: InfiniteScroll = event.target
     this.infiniteScroll = infiniteScroll;
     let len = this.calendarMonths.length;
     let final = this.calendarMonths[len - 1];
