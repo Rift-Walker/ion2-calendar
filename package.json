@@ -1,6 +1,6 @@
 {
   "name": "ion4-calendar",
-  "version": "3.0.4-beta.6",
+  "version": "3.0.4-beta.11",
   "description": "A date picker component for ionic4",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
@@ -9,12 +9,13 @@
     "clean:dist": "rm -rf dist",
     "demo:link": "npm link && cd ./demo && npm link ion2-calendar",
     "demo:serve": "cd ./demo && ionic serve",
-    "build": "run-s clean:dist build:copy-sources build:ts && gulp copy-scss ",
+    "build": "run-s clean:dist build:copy-sources build:ts build:fix && gulp copy-scss ",
     "build:ts": "tsc && ngc",
     "build:copy-sources": "gulp copy-sources",
     "test": "echo \"Error: no test specified\"",
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
-    "packagr": "ng-packagr -p package.json"
+    "packagr": "ng-packagr -p package.json",
+    "build:fix": "find dist -maxdepth 1 -type f -delete && rm -r dist/services dist/components && mv dist/src/* dist/ && rm -r dist/src"
   },
   "repository": {
     "type": "git",
