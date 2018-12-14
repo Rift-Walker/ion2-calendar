@@ -32,7 +32,7 @@ export const ION_CAL_VALUE_ACCESSOR: Provider = {
     <div class="title">
       <ng-template [ngIf]="_showMonthPicker" [ngIfElse]="title">
         <ion-button type="button"
-                clear
+                fill="clear"
                 class="switch-btn"
                 (click)="switchView()">
           {{_monthFormat(monthOpt.original.time)}}
@@ -46,10 +46,10 @@ export const ION_CAL_VALUE_ACCESSOR: Provider = {
         </div>
       </ng-template>
       <ng-template [ngIf]="_showToggleButtons">
-        <ion-button type='button' clear class="back" [disabled]="!canBack()" (click)="prev()">
+        <ion-button type='button' fill="clear" class="back" [disabled]="!canBack()" (click)="prev()">
           <ion-icon name="ios-arrow-back"></ion-icon>
         </ion-button>
-        <ion-button type='button' clear class="forward" [disabled]="!canNext()" (click)="next()">
+        <ion-button type='button' fill="clear" class="forward" [disabled]="!canNext()" (click)="next()">
           <ion-icon name="ios-arrow-forward"></ion-icon>
         </ion-button>
       </ng-template>

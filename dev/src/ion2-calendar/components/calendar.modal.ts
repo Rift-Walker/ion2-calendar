@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, ChangeDetectorRef, Renderer2, OnInit } from '@angular/core';
-import { ModalController, NavParams, Content, InfiniteScroll } from '@ionic/angular';
+import { ModalController, NavParams, IonContent, IonInfiniteScroll } from '@ionic/angular';
 import { CalendarDay, CalendarMonth, CalendarModalOptions } from '../calendar.model';
 import { CalendarService } from '../services/calendar.service';
 import * as moment_ from 'moment';
@@ -71,7 +71,7 @@ import { pickModes } from "../config";
 })
 export class CalendarModal implements OnInit {
 
-  @ViewChild(Content) content: Content;
+  @ViewChild(IonContent) content: IonContent;
   @ViewChild('months') monthsEle: ElementRef;
 
   datesTemp: Array<CalendarDay> = [null, null];
@@ -80,7 +80,7 @@ export class CalendarModal implements OnInit {
   showYearPicker: boolean;
   year: number;
   years: Array<number>;
-  infiniteScroll: InfiniteScroll;
+  infiniteScroll: IonInfiniteScroll;
   _s: boolean = true;
   _d: CalendarModalOptions;
   actualFirstTime: number;
@@ -202,7 +202,7 @@ export class CalendarModal implements OnInit {
   }
 
   nextMonth(event: any): void {
-    let infiniteScroll: InfiniteScroll = event.target
+    let infiniteScroll: IonInfiniteScroll = event.target
     this.infiniteScroll = infiniteScroll;
     let len = this.calendarMonths.length;
     let final = this.calendarMonths[len - 1];
@@ -235,9 +235,7 @@ export class CalendarModal implements OnInit {
     let defaultDateMonth = monthElement ? monthElement.offsetTop : 0;
 
     if (defaultDateIndex === -1 || defaultDateMonth === 0) return;
-    setTimeout(() => {
-      this.content.getScrollElement().scrollToPoint(0, defaultDateMonth, 128);
-    }, 300);
+    this.content.scrollToPoint(0, defaultDateMonth, 128);
   }
 
   scrollToDefaultDate(): void {
@@ -248,15 +246,19 @@ export class CalendarModal implements OnInit {
     if (!this._d.canBackwardsSelected) return;
     if ($event.scrollTop <= 200 && $event.directionY === "up" && this._s) {
       this._s = !1;
-      let lastHeight = this.content.getScrollElement().scrollHeight;
-      setTimeout(() => {
-        this.backwardsMonth();
-        let nowHeight = this.content.getScrollElement().scrollHeight;
-        this.content.getScrollElement().scrollToPoint(0, nowHeight - lastHeight, 0)
-          .then(() => {
-            this._s = !0;
+      this.content.getScrollElement().then(el => {
+        let lastHeight = el.scrollHeight;
+        setTimeout(() => {
+          this.backwardsMonth();
+          this.content.getScrollElement().then(el => {
+            let nowHeight = el.scrollHeight;
+            this.content.scrollToPoint(0, nowHeight - lastHeight, 0)
+              .then(() => {
+                this._s = !0;
+              })
           })
-      }, 180)
+        }, 180)
+      })
     }
   }
 
